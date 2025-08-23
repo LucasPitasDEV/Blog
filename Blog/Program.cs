@@ -1,3 +1,5 @@
+// Program.cs
+
 using Blog;
 using Blog.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,9 +22,7 @@ builder.Services.AddCors(opt =>
     opt.AddPolicy("frontend", p => p
         .AllowAnyHeader()
         .AllowAnyMethod()
-        .WithOrigins(
-            builder.Configuration["FrontendUrl"] ?? "http://localhost:3000"
-        )
+        .WithOrigins("http://localhost:3000") // Direciona para o seu frontend
         .AllowCredentials()
     );
 });
@@ -44,14 +44,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
-
-// Serviços próprios
 builder.Services.AddScoped<JwtService>();
-
-
 builder.Services.AddControllers();
-
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -65,8 +59,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("frontend");
+//app.UseHttpsRedirection(); // Boa prática de segurança
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
 app.Run();
