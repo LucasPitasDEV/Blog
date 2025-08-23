@@ -22,14 +22,12 @@ namespace Blog.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreatePostDto dto)
         {
-            var userId = int.Parse(User.FindFirst("Id")!.Value);
-
             var post = new Publicacao
             {
                 Titulo = dto.Titulo,
                 Conteudo = dto.Conteudo,
                 DataCriacao = DateTime.UtcNow,
-                UsuarioId = userId
+                UsuarioId = dto.userId
             };
 
             _context.Publicacao.Add(post);
@@ -93,7 +91,8 @@ namespace Blog.Controllers
                 Titulo = post.Titulo,
                 Conteudo = post.Conteudo,
                 DataCriacao = post.DataCriacao,
-                AutorNome = post.Usuario != null ? post.Usuario.Nome : string.Empty
+                AutorNome = post.Usuario != null ? post.Usuario.Nome : string.Empty,
+                userId = (int)post.UsuarioId
             };
 
             return Ok(result);
@@ -103,14 +102,15 @@ namespace Blog.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, UpdatePostDto dto)
         {
-            var post = await _context.Publicacao.FindAsync(id);
-            if (post == null) return NotFound();
-
-            var userId = int.Parse(User.FindFirst("Id")!.Value);
-            if (post.UsuarioId != userId) return Forbid();
+            var post = _context.Publicacao.FirstOrDefault(p => p.Id == id);
+            if (post == null)
+            {
+                return NotFound();
+            }
 
             post.Titulo = dto.Titulo;
             post.Conteudo = dto.Conteudo;
+            post.UsuarioId = dto.userId;
 
             await _context.SaveChangesAsync();
 

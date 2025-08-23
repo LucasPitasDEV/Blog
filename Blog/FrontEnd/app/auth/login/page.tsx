@@ -1,5 +1,3 @@
-// frontend/app/auth/login/page.tsx
-
 'use client';
 
 import { useState } from 'react';
@@ -28,8 +26,9 @@ export default function Login() {
 
     // Acessa o token diretamente do objeto desestruturado
     const { token } = response.data;
-
+    const { id } = response.data;
     localStorage.setItem('token', token);
+    localStorage.setItem('id', id);
     router.push('/posts');
 
   } 
@@ -86,7 +85,7 @@ export default function Login() {
         </form>
         <p className="mt-4 text-center text-sm text-gray-600">
           Não tem uma conta?{' '}
-          <Link href="/auth/register" className="font-semibold text-blue-600 hover:underline">
+          <Link href="/auth/registrar" className="font-semibold text-blue-600 hover:underline">
             Crie uma aqui.
           </Link>
         </p>

@@ -1,5 +1,3 @@
-// frontend/app/posts/[id]/edit/page.tsx
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -69,6 +67,7 @@ export default function EditPostPage({ params }: Props) {
 
     try {
       const token = localStorage.getItem('token');
+      const id = localStorage.getItem('id');
       if (!token) {
         setError('Você precisa estar logado para editar uma postagem.');
         return;
@@ -80,12 +79,13 @@ export default function EditPostPage({ params }: Props) {
         },
       };
 
-      await axios.put(`https://localhost:7299/api/posts/${id}`, { title, content }, config);
+      await axios.put(`https://localhost:7299/api/posts/${id}`, { titulo: title, conteudo: content, userId: id }, config);
       setSuccess('Postagem atualizada com sucesso!');
       router.push(`/posts/${id}`);
       
     } catch (err: any) {
       setError('Erro ao atualizar a postagem. Por favor, verifique os campos.');
+      console.log(err);
     } finally {
       setLoading(false);
     }

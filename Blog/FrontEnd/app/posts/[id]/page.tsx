@@ -6,14 +6,17 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { jwtDecode } from 'jwt-decode';
 
-// Usamos a interface Post aqui para garantir a consistência
+// A interface precisa incluir o ID do autor da postagem.
+// Certifique-se de que sua API retorna essa propriedade.
 interface Post {
   id: number;
   titulo: string;
   conteudo: string;
   autorNome: string;
   dataCriacao: string;
+  usuarioId: number; // <-- Adicione esta propriedade
 }
 
 interface Props {
@@ -26,11 +29,13 @@ export default function PostDetailsPage({ params }: Props) {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  // NOVO: Estado para armazenar o ID do usuário logado
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null); 
   const router = useRouter();
   const { id } = params;
 
   useEffect(() => {
-    const fetchPost = async () => {
+    const fetchPostAndUserId = async () => {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -38,13 +43,18 @@ export default function PostDetailsPage({ params }: Props) {
           return;
         }
 
+        // NOVO: 1. Decodifica o token para obter o ID do usuário logado
+        const decodedToken = jwtDecode(token) as { sub: string };
+        const userId = parseInt(decodedToken.sub);
+        setCurrentUserId(userId);
+
         const config = {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         };
         
-        // Requisição para buscar um post específico pelo ID
+        // 2. Requisição para buscar o post, que deve retornar o 'usuarioId'
         const response = await axios.get(
           `https://localhost:7299/api/posts/${id}`,
           config
@@ -62,7 +72,7 @@ export default function PostDetailsPage({ params }: Props) {
     };
 
     if (id) {
-      fetchPost();
+      fetchPostAndUserId();
     }
   }, [id, router]);
 
@@ -92,11 +102,14 @@ export default function PostDetailsPage({ params }: Props) {
 
   return (
     <div className="container mx-auto p-8">
-         <div className="flex justify-end mb-4">
-        <Link href={`/posts/${post.id}/edit`} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-          Editar Postagem
-        </Link>
-      </div>
+      {/* 3. Renderização condicional: mostra o botão se os IDs forem iguais */}
+      {currentUserId === post.userId && (
+        <div className="flex justify-end mb-4">
+          <Link href={`/posts/${post.id}/edit`} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+            Editar Postagem
+          </Link>
+        </div>
+      )}
       <div className="bg-white p-8 rounded-lg shadow-md">
         <h1 className="text-4xl font-bold mb-4 text-gray-900">{post.titulo}</h1>
         <p className="text-sm text-gray-600 mb-6">

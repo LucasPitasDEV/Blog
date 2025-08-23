@@ -1,5 +1,3 @@
-// frontend/app/posts/create/page.tsx
-
 'use client';
 
 import { useState } from 'react';
@@ -23,6 +21,7 @@ export default function CreatePostPage() {
 
     try {
       const token = localStorage.getItem('token');
+      const id = localStorage.getItem('id');
       if (!token) {
         setError('Você precisa estar logado para criar uma postagem.');
         setLoading(false);
@@ -38,8 +37,9 @@ export default function CreatePostPage() {
       const response = await axios.post(
         'https://localhost:7299/api/posts',
         {
-          title,
-          content,
+          titulo: title,
+          conteudo: content,
+          userId: id, 
         },
         config
       );

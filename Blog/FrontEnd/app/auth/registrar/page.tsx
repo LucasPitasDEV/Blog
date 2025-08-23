@@ -1,7 +1,6 @@
 // frontend/app/auth/register/page.tsx
 
-'use client'; // Necessário no Next.js 13+ para usar Hooks e estados no cliente
-
+'use client';
 import { useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
@@ -19,10 +18,10 @@ export default function Register() {
     setSuccess('');
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', {
-        name,
-        email,
-        password,
+      const response = await axios.post('https://localhost:7299/api/auth/register', {
+        nome: name,
+        email: email,
+        senha: password,
       });
 
       setSuccess('Usuário registrado com sucesso! Redirecionando para o login...');

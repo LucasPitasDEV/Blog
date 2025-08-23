@@ -2,6 +2,7 @@
 {
     public class PostagemDto
     {
+        public int userId { get; set; }
         public int Id { get; set; }
         public string Titulo { get; set; } = null!;
         public string Conteudo { get; set; } = null!;
