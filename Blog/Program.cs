@@ -46,7 +46,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 // Serviços próprios
-builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<JwtService>();
+
+
 builder.Services.AddControllers();
 
 
