@@ -1,61 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useState } from "react";
+import Link from "next/link";
+import { useCreatePost } from "@/hooks/useCreatePost";
 
 export default function CreatePostPage() {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const { handleCreatePost, loading, error, success } = useCreatePost();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
-    setLoading(true);
-
-    try {
-      const token = localStorage.getItem('token');
-      const id = localStorage.getItem('id');
-      if (!token) {
-        setError('Você precisa estar logado para criar uma postagem.');
-        setLoading(false);
-        return;
-      }
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      const response = await axios.post(
-        'https://localhost:7299/api/posts',
-        {
-          titulo: title,
-          conteudo: content,
-          userId: id, 
-        },
-        config
-      );
-
-      setSuccess('Postagem criada com sucesso!');
-      router.push('/posts');
-
-    } catch (err: any) {
-      if (err.response && err.response.data) {
-        setError(err.response.data.message || 'Erro ao criar a postagem. Por favor, verifique os campos.');
-      } else {
-        setError('Ocorreu um erro. Verifique sua conexão com a API.');
-      }
-    } finally {
-      setLoading(false);
-    }
+    handleCreatePost(title, content);
   };
 
   return (
@@ -93,10 +49,10 @@ export default function CreatePostPage() {
           {success && <p className="mb-4 text-center text-green-500">{success}</p>}
           <button
             type="submit"
-            className={`w-full rounded-md p-2 text-white ${loading ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'}`}
+            className={`w-full rounded-md p-2 text-white ${loading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"}`}
             disabled={loading}
           >
-            {loading ? 'Publicando...' : 'Publicar Postagem'}
+            {loading ? "Publicando..." : "Publicar Postagem"}
           </button>
         </form>
         <div className="mt-4 text-center text-sm">

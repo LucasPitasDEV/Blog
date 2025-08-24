@@ -1,5 +1,3 @@
-// frontend/app/page.tsx
-
 'use client';
 
 import { useEffect } from 'react';
@@ -9,7 +7,6 @@ export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redireciona o usuário para a página de login
     router.push('/auth/login');
   }, [router]);
 
