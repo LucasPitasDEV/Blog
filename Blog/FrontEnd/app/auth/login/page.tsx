@@ -10,7 +10,7 @@ export default function Login() {
 
   const { handleLogin, loading, error } = useAuth();
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = (e) => {
     e.preventDefault();
     handleLogin(email, senha);
   };
@@ -29,7 +29,7 @@ export default function Login() {
             </label>
             <input
               type="email"
-              className="w-full rounded-md border p-2 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-md border p-2 focus:border-blue-500 focus:outline-none text-gray-900" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -42,7 +42,7 @@ export default function Login() {
             </label>
             <input
               type="password"
-              className="w-full rounded-md border p-2 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-md border p-2 focus:border-blue-500 focus:outline-none text-gray-900" 
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               required

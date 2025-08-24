@@ -30,7 +30,7 @@ export default function Register() {
             </label>
             <input
               type="text"
-              className="w-full rounded-md border p-2 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-md border p-2 focus:border-blue-500 focus:outline-none text-gray-900"
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               required
@@ -43,7 +43,7 @@ export default function Register() {
             </label>
             <input
               type="email"
-              className="w-full rounded-md border p-2 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-md border p-2 focus:border-blue-500 focus:outline-none text-gray-900"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -56,7 +56,7 @@ export default function Register() {
             </label>
             <input
               type="password"
-              className="w-full rounded-md border p-2 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-md border p-2 focus:border-blue-500 focus:outline-none text-gray-900"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               required

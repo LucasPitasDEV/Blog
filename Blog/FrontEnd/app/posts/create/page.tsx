@@ -27,7 +27,7 @@ export default function CreatePostPage() {
             </label>
             <input
               type="text"
-              className="w-full rounded-md border p-2 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-md border p-2 focus:border-blue-500 focus:outline-none text-gray-900"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -38,7 +38,7 @@ export default function CreatePostPage() {
               Conteúdo
             </label>
             <textarea
-              className="w-full rounded-md border p-2 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-md border p-2 focus:border-blue-500 focus:outline-none text-gray-900"
               rows={6}
               value={content}
               onChange={(e) => setContent(e.target.value)}
