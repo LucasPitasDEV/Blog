@@ -1,4 +1,5 @@
 ﻿using Blog.DTO;
+using Blog.Interfaces;
 using Blog.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,36 +13,19 @@ namespace Blog.Controllers
     public class PostsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IPostsRepository _postsRepository;
 
-        public PostsController(AppDbContext context)
+        public PostsController(AppDbContext context, IPostsRepository postsRepository)
         {
             _context = context;
+            _postsRepository = postsRepository;
         }
 
         // POST /api/posts
         [HttpPost]
         public async Task<IActionResult> Create(CreatePostDto dto)
         {
-            var post = new Publicacao
-            {
-                Titulo = dto.Titulo,
-                Conteudo = dto.Conteudo,
-                DataCriacao = DateTime.UtcNow,
-                UsuarioId = dto.userId
-            };
-
-            _context.Publicacao.Add(post);
-            await _context.SaveChangesAsync();
-
-            var result = new PostagemDto
-            {
-                Id = (int)post.Id,
-                Titulo = post.Titulo,
-                Conteudo = post.Conteudo,
-                DataCriacao = post.DataCriacao,
-                AutorNome = User.Identity!.Name ?? "Autor"
-            };
-
+            var result = await _postsRepository.Create(dto);
             return Ok(result);
         }
 
@@ -49,26 +33,13 @@ namespace Blog.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] bool meus_posts = false)
         {
-            IQueryable<Publicacao> query = _context.Publicacao.Include(p => p.Usuario);
-
+            var userId = 0;
             if (meus_posts)
             {
-                var userId = int.Parse(User.FindFirst("Id")!.Value);
-                query = query.Where(p => p.UsuarioId == userId);
+                userId = int.Parse(User.FindFirst("Id")!.Value);
             }
 
-
-            var posts = await query
-                .OrderByDescending(p => p.DataCriacao)
-                .Select(p => new PostagemDto
-                {
-                    Id = (int)p.Id,
-                    Titulo = p.Titulo,
-                    Conteudo = p.Conteudo,
-                    DataCriacao = p.DataCriacao,
-                    AutorNome = p.Usuario != null ? p.Usuario.Nome : string.Empty
-                })
-                .ToListAsync();
+            var posts = await _postsRepository.GetAll(meus_posts, userId);
 
             return Ok(posts);
         }
@@ -77,24 +48,7 @@ namespace Blog.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var post = await _context.Publicacao
-                .Include(p => p.Usuario)
-                .FirstOrDefaultAsync(p => p.Id == id);
-
-            if (post == null) return NotFound();
-
-            // No método GetById, ajuste a atribuição de AutorNome para evitar referência nula.
-
-            var result = new PostagemDto
-            {
-                Id = (int)post.Id,
-                Titulo = post.Titulo,
-                Conteudo = post.Conteudo,
-                DataCriacao = post.DataCriacao,
-                AutorNome = post.Usuario != null ? post.Usuario.Nome : string.Empty,
-                userId = (int)post.UsuarioId
-            };
-
+            var result = await _postsRepository.GetById(id);
             return Ok(result);
         }
 
@@ -102,32 +56,16 @@ namespace Blog.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, UpdatePostDto dto)
         {
-            var post = _context.Publicacao.FirstOrDefault(p => p.Id == id);
-            if (post == null)
-            {
-                return NotFound();
-            }
-
-            post.Titulo = dto.Titulo;
-            post.Conteudo = dto.Conteudo;
-            post.UsuarioId = dto.userId;
-
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            var result = await _postsRepository.Update(id, dto);
+            return Ok(result);
         }
 
         // DELETE /api/posts/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var post = _context.Publicacao.FirstOrDefault(p => p.Id == id);
-            if (post == null) return NotFound();
-
-            _context.Publicacao.Remove(post);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            var result = await _postsRepository.Delete(id);
+            return Ok(result);
         }
     }
 }
