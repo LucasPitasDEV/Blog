@@ -121,11 +121,8 @@ namespace Blog.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var post = await _context.Publicacao.FindAsync(id);
+            var post = _context.Publicacao.FirstOrDefault(p => p.Id == id);
             if (post == null) return NotFound();
-
-            var userId = int.Parse(User.FindFirst("Id")!.Value);
-            if (post.UsuarioId != userId) return Forbid();
 
             _context.Publicacao.Remove(post);
             await _context.SaveChangesAsync();
