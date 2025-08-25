@@ -64,11 +64,6 @@ npm run dev
 
 🛡️ Permissões de usuário para proteger recursos críticos
 
-💡 Dica: você pode adicionar badges do Shields.io
- no topo, tipo:
-
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
-
 🔄 Fluxo da Arquitetura
 Frontend (Next.js)
 
